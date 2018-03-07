@@ -52,7 +52,11 @@ module.exports = function (options) {
         {
           type: 'input',
           name: 'issue',
-          message: 'Add issue reference number\n'
+          message: 'Add issue reference number (press enter to skip)\n'
+        }, {
+          type: 'input',
+          name: 'scope',
+          message: 'What is the scope of this change (e.g. component or file name)? (press enter to skip)\n'
         }, {
           type: 'list',
           name: 'type',
@@ -64,7 +68,14 @@ module.exports = function (options) {
           message: 'Write imperative tense description of the change:\n'
         }
       ]).then(function(answers) {
-        commit('[#' + answers.issue + '] (' + answers.type + ') ' + answers.subject);
+        var subject;
+        if (answers.issue) {
+          subject = '[#' + answers.issue + '] ' + answers.subject;
+        } else {
+          subject = answers.subject;
+        }
+
+        commit(answers.type + '(' + answers.scope + '): ' + subject);
       });
     }
   };
