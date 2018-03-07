@@ -17,6 +17,7 @@ var filter = function(array) {
 module.exports = function (options) {
 
   var types = options.types;
+  var preferredOrder = ['refactor', 'feat', 'fix'];
 
   var length = longest(Object.keys(types)).length + 1;
   var choices = map(types, function (type, key) {
@@ -24,6 +25,8 @@ module.exports = function (options) {
       name: rightPad(key + ':', length) + ' ' + type.description,
       value: key
     };
+  }).sort(function(opt1, opt2) {
+    return preferredOrder.indexOf(opt2.value) - preferredOrder.indexOf(opt1.value);
   });
 
   return {
@@ -50,6 +53,11 @@ module.exports = function (options) {
       // collection library if you prefer.
       cz.prompt([
         {
+          type: 'list',
+          name: 'type',
+          message: 'Select the type of change that you\'re committing:\n',
+          choices: choices
+        }, {
           type: 'input',
           name: 'issue',
           message: 'Add issue reference number (press enter to skip)\n'
@@ -57,11 +65,6 @@ module.exports = function (options) {
           type: 'input',
           name: 'scope',
           message: 'What is the scope of this change (e.g. component or file name)? (press enter to skip)\n'
-        }, {
-          type: 'list',
-          name: 'type',
-          message: 'Select the type of change that you\'re committing:\n',
-          choices: choices
         }, {
           type: 'input',
           name: 'subject',
